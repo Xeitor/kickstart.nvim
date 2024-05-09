@@ -330,7 +330,7 @@ require('lazy').setup({
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
-    branch = '0.1.x',
+    branch = 'master',
     dependencies = {
       'nvim-lua/plenary.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
@@ -347,9 +347,6 @@ require('lazy').setup({
         end,
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
-
-      -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -580,7 +577,7 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
+        pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -590,7 +587,6 @@ require('lazy').setup({
         -- But for many setups, the LSP (`tsserver`) will work just fine
         -- tsserver = {},
         --
-
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -605,7 +601,25 @@ require('lazy').setup({
             },
           },
         },
+        solargraph = {},
       }
+
+      local handle = io.popen "ruby -e 'puts RUBY_VERSION'" -- Run the command and get its output
+      local version = handle:read '*a' -- Read the entire output
+      handle:close()
+
+      -- Split the version number into major, minor, and patch parts
+      local major, minor, patch = string.match(version, '(%d+)%.(%d+)%.(%d+)')
+
+      -- Convert the parts to numbers
+      major, minor, patch = tonumber(major), tonumber(minor), tonumber(patch)
+
+      -- Check if the version is greater than or equal to 3.0
+      -- if major >= 3 then
+      --   servers.ruby_ls = {}
+      -- else
+      --   servers.solargraph = {}-- Your solargraph settings here}
+      -- end
 
       -- Ensure the servers and tools above are installed
       --  To check the current status of installed tools and/or manually install
